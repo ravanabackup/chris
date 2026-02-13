@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Little Something for Chris</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #d4af37;
+            --deep-red: #800f2f;
+            --soft-pink: #fff0f3;
+            --text-dark: #2d132c;
+            --accent: #ff4d6d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d132c 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 2s ease;
+        }
+
+        /* --- Envelope Animation --- */
+        .intro-box {
+            text-align: center;
+            color: var(--gold);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.8s ease;
+        }
+
+        .envelope {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* --- Main Content --- */
+        .main-card {
+            display: none;
+            opacity: 0;
+            width: 90%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            border: 2px solid var(--gold);
+        }
+
+        .main-card.active {
+            display: block;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.5rem;
+            color: var(--deep-red);
+            margin-bottom: 10px;
+        }
+
+        .letter-content {
+            color: var(--text-dark);
+            line-height: 1.8;
+            font-size: 0.95rem;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .highlight-text {
+            color: var(--deep-red);
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        /* --- BOUQUET LOGIC --- */
+        .bouquet {
+            position: relative;
+            margin: 20px auto 40px; /* added bottom margin for ribbon space */
+            height: 220px;
+            width: 200px; /* Constrained width to force overlap */
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        /* Wrapper handles the rotation/position in the bouquet */
+        .flower-wrapper {
+            position: absolute;
+            bottom: 20px; /* Lift up slightly for ribbon */
+            left: 50%;
+            transform-origin: bottom center;
+            /* We use a wrapper so the rotation doesn't conflict with the grow animation */
+        }
+
+        /* Fan out the flowers */
+        .flower-wrapper:nth-child(1) { transform: translateX(-50%) rotate(-35deg); z-index: 1; }
+        .flower-wrapper:nth-child(2) { transform: translateX(-50%) rotate(-18deg); z-index: 2; }
+        .flower-wrapper:nth-child(3) { transform: translateX(-50%) rotate(0deg) translateY(-10px); z-index: 3; } /* Center pops up */
+        .flower-wrapper:nth-child(4) { transform: translateX(-50%) rotate(18deg); z-index: 2; }
+        .flower-wrapper:nth-child(5) { transform: translateX(-50%) rotate(35deg); z-index: 1; }
+
+        /* The actual flower content handles the grow animation */
+        .flower-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform-origin: bottom center;
+            opacity: 0;
+            animation: growFlower 1.5s ease-out forwards;
+        }
+
+        .flower-wrapper:nth-child(1) .flower-content { animation-delay: 0.3s; }
+        .flower-wrapper:nth-child(2) .flower-content { animation-delay: 0.6s; }
+        .flower-wrapper:nth-child(3) .flower-content { animation-delay: 0.9s; }
+        .flower-wrapper:nth-child(4) .flower-content { animation-delay: 1.2s; }
+        .flower-wrapper:nth-child(5) .flower-content { animation-delay: 1.5s; }
+
+        @keyframes growFlower {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- Ribbon --- */
+        .ribbon {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            opacity: 0;
+            animation: fadeIn 1s forwards 2s; /* Appears after flowers */
+        }
+
+        .ribbon-knot {
+            width: 20px;
+            height: 20px;
+            background: var(--deep-red);
+            border-radius: 4px;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .ribbon-loop {
+            position: absolute;
+            top: -5px;
+            width: 40px;
+            height: 20px;
+            border: 3px solid var(--deep-red);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .ribbon-loop.left { right: 10px; transform: rotate(-10deg); }
+        .ribbon-loop.right { left: 10px; transform: rotate(10deg); }
+
+        .ribbon-tail {
+            position: absolute;
+            top: 10px;
+            width: 10px;
+            height: 40px;
+            background: var(--deep-red);
+            z-index: 0;
+        }
+        .ribbon-tail.left { right: 8px; transform: rotate(20deg); }
+        .ribbon-tail.right { left: 8px; transform: rotate(-20deg); }
+
+
+        /* --- FLOWER COMPONENTS (Identical to before) --- */
+        
+        /* Flower Bloom Animation */
+        .bloom {
+            width: 50px;
+            height: 50px;
+            position: relative;
+            animation: bloom 3s ease-in-out infinite;
+            filter: drop-shadow(0 3px 8px rgba(0,0,0,0.3));
+        }
+
+        @keyframes bloom {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.05) rotate(5deg); }
+        }
+
+        /* Rose */
+        .rose { width: 45px; height: 45px; position: relative; }
+        .rose-petal {
+            position: absolute; width: 20px; height: 25px;
+            background: linear-gradient(135deg, #ff1744 0%, #c2185b 100%);
+            border-radius: 50% 50% 0 50%; transform-origin: bottom center;
+        }
+        .rose-petal:nth-child(1) { transform: rotate(0deg) translateY(-8px); }
+        .rose-petal:nth-child(2) { transform: rotate(72deg) translateY(-8px); }
+        .rose-petal:nth-child(3) { transform: rotate(144deg) translateY(-8px); }
+        .rose-petal:nth-child(4) { transform: rotate(216deg) translateY(-8px); }
+        .rose-petal:nth-child(5) { transform: rotate(288deg) translateY(-8px); }
+        .rose-center {
+            position: absolute; width: 15px; height: 15px;
+            background: radial-gradient(circle, #ff4081 0%, #c2185b 100%);
+            border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        /* Tulip */
+        .tulip { width: 40px; height: 40px; position: relative; }
+        .tulip-petal {
+            position: absolute; width: 18px; height: 30px;
+            background: linear-gradient(135deg, #f06292 0%, #ec407a 100%);
+            border-radius: 50% 50% 20% 20%;
+        }
+        .tulip-petal:nth-child(1) { left: 11px; transform: rotate(-15deg); }
+        .tulip-petal:nth-child(2) { left: 11px; transform: rotate(15deg); }
+        .tulip-petal:nth-child(3) { left: 3px; transform: rotate(-25deg); opacity: 0.8; }
+        .tulip-petal:nth-child(4) { right: 3px; transform: rotate(25deg); opacity: 0.8; }
+
+        /* Daisy */
+        .daisy { width: 45px; height: 45px; position: relative; }
+        .daisy-petal {
+            position: absolute; width: 12px; height: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #fce4ec 100%);
+            border-radius: 50%; top: 50%; left: 50%; transform-origin: center;
+        }
+        .daisy-petal:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg) translateY(-15px); }
+        .daisy-petal:nth-child(2) { transform: translate(-50%, -50%) rotate(45deg) translateY(-15px); }
+        .daisy-petal:nth-child(3) { transform: translate(-50%, -50%) rotate(90deg) translateY(-15px); }
+        .daisy-petal:nth-child(4) { transform: translate(-50%, -50%) rotate(135deg) translateY(-15px); }
+        .daisy-petal:nth-child(5) { transform: translate(-50%, -50%) rotate(180deg) translateY(-15px); }
+        .daisy-petal:nth-child(6) { transform: translate(-50%, -50%) rotate(225deg) translateY(-15px); }
+        .daisy-petal:nth-child(7) { transform: translate(-50%, -50%) rotate(270deg) translateY(-15px); }
+        .daisy-petal:nth-child(8) { transform: translate(-50%, -50%) rotate(315deg) translateY(-15px); }
+        .daisy-center {
+            position: absolute; width: 16px; height: 16px;
+            background: radial-gradient(circle, #ffeb3b 0%, #fdd835 100%);
+            border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        /* Sunflower */
+        .sunflower { width: 50px; height: 50px; position: relative; }
+        .sunflower-petal {
+            position: absolute; width: 14px; height: 22px;
+            background: linear-gradient(135deg, #ffeb3b 0%, #fbc02d 100%);
+            border-radius: 50% 50% 30% 30%; top: 50%; left: 50%; transform-origin: center;
+        }
+        .sunflower-petal:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg) translateY(-18px); }
+        .sunflower-petal:nth-child(2) { transform: translate(-50%, -50%) rotate(40deg) translateY(-18px); }
+        .sunflower-petal:nth-child(3) { transform: translate(-50%, -50%) rotate(80deg) translateY(-18px); }
+        .sunflower-petal:nth-child(4) { transform: translate(-50%, -50%) rotate(120deg) translateY(-18px); }
+        .sunflower-petal:nth-child(5) { transform: translate(-50%, -50%) rotate(160deg) translateY(-18px); }
+        .sunflower-petal:nth-child(6) { transform: translate(-50%, -50%) rotate(200deg) translateY(-18px); }
+        .sunflower-petal:nth-child(7) { transform: translate(-50%, -50%) rotate(240deg) translateY(-18px); }
+        .sunflower-petal:nth-child(8) { transform: translate(-50%, -50%) rotate(280deg) translateY(-18px); }
+        .sunflower-petal:nth-child(9) { transform: translate(-50%, -50%) rotate(320deg) translateY(-18px); }
+        .sunflower-center {
+            position: absolute; width: 20px; height: 20px;
+            background: radial-gradient(circle, #8d6e63 0%, #6d4c41 100%);
+            border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        /* Cherry Blossom */
+        .cherry { width: 45px; height: 45px; position: relative; }
+        .cherry-petal {
+            position: absolute; width: 16px; height: 18px;
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+            border-radius: 50% 50% 0 0; top: 50%; left: 50%; transform-origin: bottom center;
+        }
+        .cherry-petal:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg) translateY(-10px); }
+        .cherry-petal:nth-child(2) { transform: translate(-50%, -50%) rotate(72deg) translateY(-10px); }
+        .cherry-petal:nth-child(3) { transform: translate(-50%, -50%) rotate(144deg) translateY(-10px); }
+        .cherry-petal:nth-child(4) { transform: translate(-50%, -50%) rotate(216deg) translateY(-10px); }
+        .cherry-petal:nth-child(5) { transform: translate(-50%, -50%) rotate(288deg) translateY(-10px); }
+        .cherry-center {
+            position: absolute; width: 8px; height: 8px;
+            background: radial-gradient(circle, #ffeb3b 0%, #fdd835 100%);
+            border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        /* Stem */
+        .stem {
+            width: 4px;
+            /* Made stems slightly longer to handle the gathering point better */
+            height: 120px; 
+            background: linear-gradient(to bottom, #81c784 0%, #66bb6a 50%, #4caf50 100%);
+            border-radius: 2px;
+            position: relative;
+            box-shadow: inset -1px 0 2px rgba(0,0,0,0.2);
+        }
+
+        /* Leaves */
+        .leaf {
+            position: absolute; width: 15px; height: 10px;
+            background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%);
+            border-radius: 0 50% 50% 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .leaf-left { left: -8px; top: 30%; transform: rotate(-30deg); }
+        .leaf-right { right: -8px; top: 50%; transform: rotate(30deg) scaleX(-1); }
+
+        /* Sparkle Effects */
+        .sparkle {
+            position: absolute; width: 6px; height: 6px;
+            background: radial-gradient(circle, #fff 0%, transparent 70%);
+            border-radius: 50%; animation: sparkle 2s ease-in-out infinite; pointer-events: none;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        .sparkle:nth-child(1) { top: -5px; left: -5px; animation-delay: 0s; }
+        .sparkle:nth-child(2) { top: -5px; right: -5px; animation-delay: 0.5s; }
+        .sparkle:nth-child(3) { bottom: -5px; left: 50%; animation-delay: 1s; }
+
+        .signature {
+            margin-top: 30px;
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            color: var(--deep-red);
+            text-align: right;
+        }
+
+        /* --- Hearts Background --- */
+        .heart {
+            position: absolute;
+            color: var(--accent);
+            opacity: 0.5;
+            pointer-events: none;
+            animation: heartFall linear forwards;
+        }
+
+        @keyframes heartFall {
+            to { transform: translateY(100vh); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="intro-box" id="intro" onclick="revealValentine()">
+        <div class="envelope">💌</div>
+        <p style="letter-spacing: 3px; font-weight: 300;">A PERSONAL NOTE FOR CHRIS</p>
+        <p style="font-size: 0.7rem; margin-top: 10px; color: #888;">(Tap to open)</p>
+    </div>
+
+    <div class="main-card" id="card">
+        <h1>Hi Chris,</h1>
+        
+        <div class="bouquet">
+            <div class="ribbon">
+                <div class="ribbon-loop left"></div>
+                <div class="ribbon-loop right"></div>
+                <div class="ribbon-tail left"></div>
+                <div class="ribbon-tail right"></div>
+                <div class="ribbon-knot"></div>
+            </div>
+
+            <div class="flower-wrapper">
+                <div class="flower-content">
+                    <div class="bloom">
+                        <div class="cherry">
+                            <div class="cherry-petal"></div><div class="cherry-petal"></div>
+                            <div class="cherry-petal"></div><div class="cherry-petal"></div>
+                            <div class="cherry-petal"></div><div class="cherry-center"></div>
+                            <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+                        </div>
+                    </div>
+                    <div class="stem"><div class="leaf leaf-left"></div><div class="leaf leaf-right"></div></div>
+                </div>
+            </div>
+
+            <div class="flower-wrapper">
+                <div class="flower-content">
+                    <div class="bloom">
+                        <div class="daisy">
+                            <div class="daisy-petal"></div><div class="daisy-petal"></div>
+                            <div class="daisy-petal"></div><div class="daisy-petal"></div>
+                            <div class="daisy-petal"></div><div class="daisy-petal"></div>
+                            <div class="daisy-petal"></div><div class="daisy-petal"></div>
+                            <div class="daisy-center"></div>
+                            <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+                        </div>
+                    </div>
+                    <div class="stem"><div class="leaf leaf-left"></div><div class="leaf leaf-right"></div></div>
+                </div>
+            </div>
+
+            <div class="flower-wrapper">
+                <div class="flower-content">
+                    <div class="bloom">
+                        <div class="tulip">
+                            <div class="tulip-petal"></div><div class="tulip-petal"></div>
+                            <div class="tulip-petal"></div><div class="tulip-petal"></div>
+                            <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+                        </div>
+                    </div>
+                    <div class="stem"><div class="leaf leaf-left"></div><div class="leaf leaf-right"></div></div>
+                </div>
+            </div>
+
+            <div class="flower-wrapper">
+                <div class="flower-content">
+                    <div class="bloom">
+                        <div class="sunflower">
+                            <div class="sunflower-petal"></div><div class="sunflower-petal"></div>
+                            <div class="sunflower-petal"></div><div class="sunflower-petal"></div>
+                            <div class="sunflower-petal"></div><div class="sunflower-petal"></div>
+                            <div class="sunflower-petal"></div><div class="sunflower-petal"></div>
+                            <div class="sunflower-petal"></div><div class="sunflower-center"></div>
+                            <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+                        </div>
+                    </div>
+                    <div class="stem"><div class="leaf leaf-left"></div><div class="leaf leaf-right"></div></div>
+                </div>
+            </div>
+
+            <div class="flower-wrapper">
+                <div class="flower-content">
+                    <div class="bloom">
+                        <div class="rose">
+                            <div class="rose-petal"></div><div class="rose-petal"></div>
+                            <div class="rose-petal"></div><div class="rose-petal"></div>
+                            <div class="rose-petal"></div><div class="rose-center"></div>
+                            <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+                        </div>
+                    </div>
+                    <div class="stem"><div class="leaf leaf-left"></div><div class="leaf leaf-right"></div></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="letter-content">
+            <p>Suna hai aaj kal aapka schedule kafi <span class="highlight-text">'Hectic'</span> chal raha hai... isliye socha ki is daur-bhag mein thoda sukoon ka ek lamha add kar doon.</p>
+            <br>
+            <p>Miles apart hone ki wajah se asli bouquet toh nahi bhej saka, par ye digital space sirf aapke liye code ki hai.</p>
+            <br>
+            <p>Umeed hai ye aapke chehre par ek pyari si muskan layega. Looking forward to more interesting <span class="highlight-text">'charchas'</span> and knowing the person who handles everything with such grace.</p>
+            <br>
+            <p style="text-align: center; font-weight: 600; color: var(--deep-red);">Happy Valentine's Day! ✨</p>
+        </div>
+        <div class="signature">— Sajin</div>
+    </div>
+
+    <script>
+        function revealValentine() {
+            document.getElementById('intro').style.display = 'none';
+            document.body.style.background = 'var(--soft-pink)';
+            const card = document.getElementById('card');
+            card.classList.add('active');
+            setInterval(createHeart, 300);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤';
+            heart.classList.add('heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '-20px';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+    </script>
+</body>
+</html>
