@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Little Something for Chris</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #d4af37;
+            --deep-red: #800f2f;
+            --soft-pink: #fff0f3;
+            --text-dark: #2d132c;
+            --accent: #ff4d6d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000; /* Sophisticated Dark Intro */
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d132c 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 2s ease;
+        }
+
+        /* --- Envelope Animation --- */
+        .intro-box {
+            text-align: center;
+            color: var(--gold);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.8s ease;
+        }
+
+        .envelope {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* --- Main Content (Hidden) --- */
+        .main-card {
+            display: none;
+            opacity: 0;
+            width: 90%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            border: 2px solid var(--gold);
+        }
+
+        .main-card.active {
+            display: block;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.5rem;
+            color: var(--deep-red);
+            margin-bottom: 20px;
+        }
+
+        .letter-content {
+            color: var(--text-dark);
+            line-height: 1.8;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+
+        .highlight-text {
+            color: var(--deep-red);
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        /* --- Custom CSS Bouquet --- */
+        .bouquet {
+            margin: 20px auto;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .flower {
+            width: 15px;
+            height: 80px;
+            background: #4a7c44;
+            position: relative;
+            border-radius: 5px;
+        }
+
+        .flower::after {
+            content: '🌸';
+            position: absolute;
+            top: -25px;
+            left: -8px;
+            font-size: 1.5rem;
+        }
+
+        .flower:nth-child(2) { height: 100px; }
+        .flower:nth-child(2)::after { content: '🌹'; }
+        .flower:nth-child(3)::after { content: '🌺'; }
+
+        .signature {
+            margin-top: 30px;
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            color: var(--deep-red);
+            text-align: right;
+        }
+
+        /* --- Hearts Background --- */
+        .heart {
+            position: absolute;
+            color: var(--accent);
+            opacity: 0.5;
+            pointer-events: none;
+            animation: heartFall linear forwards;
+        }
+
+        @keyframes heartFall {
+            to { transform: translateY(100vh); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="intro-box" id="intro" onclick="revealValentine()">
+        <div class="envelope">💌</div>
+        <p style="letter-spacing: 3px; font-weight: 300;">A PERSONAL NOTE FOR CHRIS</p>
+        <p style="font-size: 0.7rem; margin-top: 10px; color: #888;">(Tap to open)</p>
+    </div>
+
+    <div class="main-card" id="card">
+        <h1>Hi Chris,</h1>
+        <div class="bouquet">
+            <div class="flower"></div>
+            <div class="flower"></div>
+            <div class="flower"></div>
+        </div>
+        <div class="letter-content">
+            <p>Suna hai aaj kal aapka schedule kafi <span class="highlight-text">'Hectic'</span> chal raha hai... isliye socha ki is daur-bhag mein thoda sukoon ka ek lamha add kar doon.</p>
+            <br>
+            <p>Miles apart hone ki wajah se asli bouquet toh nahi bhej saka, par ye digital space sirf aapke liye code ki hai.</p>
+            <br>
+            <p>Umeed hai ye aapke chehre par ek pyari si muskan layega. Looking forward to more interesting <span class="highlight-text">'charchas'</span> and knowing the person who handles everything with such grace.</p>
+            <br>
+            <p style="text-align: center; font-weight: 600; color: var(--deep-red);">Happy Valentine's Day! ✨ - Sajin</p>
+        </div>
+        <div class="signature">— Sajin</div>
+    </div>
+
+    <script>
+        function revealValentine() {
+            document.getElementById('intro').style.display = 'none';
+            document.body.style.background = 'var(--soft-pink)';
+            const card = document.getElementById('card');
+            card.classList.add('active');
+            setInterval(createHeart, 300);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤';
+            heart.classList.add('heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '-20px';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+    </script>
+</body>
+</html>
